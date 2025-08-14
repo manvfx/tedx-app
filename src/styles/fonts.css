@@ -1,0 +1,61 @@
+/* YekanBakh Font for Persian and English - Local Assets */
+
+/* Light (300) */
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('../assets/fonts/YekanBakh-Light.woff2') format('woff2'),
+       url('../assets/fonts/YekanBakh-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Regular (400) */
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('../assets/fonts/YekanBakh-Regular.woff2') format('woff2'),
+       url('../assets/fonts/YekanBakh-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* SemiBold (600) */
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('../assets/fonts/YekanBakh-SemiBold.woff2') format('woff2'),
+       url('../assets/fonts/YekanBakh-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Bold (700) */
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('../assets/fonts/YekanBakh-Bold.woff2') format('woff2'),
+       url('../assets/fonts/YekanBakh-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ExtraBold (800) */
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('../assets/fonts/YekanBakh-ExtraBold.woff2') format('woff2'),
+       url('../assets/fonts/YekanBakh-ExtraBold.woff') format('woff');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Black (900) */
+@font-face {
+  font-family: 'YekanBakh';
+  src: url('../assets/fonts/YekanBakh-Black.woff2') format('woff2'),
+       url('../assets/fonts/YekanBakh-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
