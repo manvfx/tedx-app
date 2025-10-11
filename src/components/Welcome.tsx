@@ -122,7 +122,7 @@ export function Welcome({ onStart, language }: WelcomeProps) {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <img 
-              src="/logo-black.png" 
+              src="/logo-white.png" 
               alt="TEDx Logo" 
               className="h-16 w-auto"
             />
