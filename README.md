@@ -1,69 +1,147 @@
-# React + TypeScript + Vite
+# TEDx Personality Quiz Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Persian personality assessment web application based on 10 mythological Iranian archetypes with 60 questions using a Likert scale scoring system.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** with TypeScript
+- **Vite** - Build tool
+- **Tailwind CSS v4** - Styling
+- **Radix UI** - UI primitives
+- **React Hook Form** + **Zod** - Form validation
+- **Framer Motion** - Animations
+- **shadcn/ui** - Component library
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js (v18 or higher)
+- npm or yarn
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Install dependencies:
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Configure environment variables:
+```bash
+# Copy .env.example to .env
+cp .env.example .env
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Edit .env file with your API URLs
 ```
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_API_BASE_URL_DEV` | Development API URL | `http://localhost:8005` |
+| `VITE_API_BASE_URL_PROD` | Production API URL | `https://api.yourdomain.com` |
+| `VITE_APP_NAME` | Application name | `TEDx Personality Test` |
+| `VITE_APP_VERSION` | Application version | `1.0.0` |
+
+**Note:** All environment variables must be prefixed with `VITE_` to be exposed to the client.
+
+See `.env.example` for a complete template.
+
+## Running the Application
+
+```bash
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run linting
+npm run lint
+```
+
+The application will run on **http://localhost:5173** (or the next available port).
+
+## Project Structure
+
+```
+tedx-app/
+├── src/
+│   ├── components/       # React components
+│   │   ├── ui/          # Reusable UI components (shadcn/ui)
+│   │   ├── Welcome.tsx  # Welcome form component
+│   │   ├── Quiz.tsx     # Quiz component
+│   │   └── Results.tsx  # Results component
+│   ├── config/          # Configuration files
+│   │   └── api.ts       # API configuration and helpers
+│   ├── data/            # Static data and quiz questions
+│   ├── lib/             # Utility libraries
+│   ├── utils/           # Utility functions
+│   ├── styles/          # Global styles
+│   ├── App.tsx          # Main application component
+│   └── main.tsx         # Application entry point
+├── public/              # Static assets
+├── .env                 # Environment variables (not committed)
+├── .env.example         # Environment variables template
+└── package.json         # Dependencies and scripts
+```
+
+## Features
+
+- 🌍 **Bilingual Support** - Persian (RTL) and English
+- 🌙 **Dark Theme** - Dark mode enabled by default
+- 📱 **Responsive Design** - Mobile-first approach
+- ✨ **Smooth Animations** - Framer Motion transitions
+- 💾 **Progress Saving** - LocalStorage integration
+- 🔒 **Form Validation** - Client-side and server-side validation
+- 🎨 **Modern UI** - Beautiful components with Radix UI and Tailwind
+
+## API Integration
+
+The application connects to a backend API for storing user submissions. The API base URL is configured via environment variables:
+
+- **Development:** `http://localhost:8005`
+- **Production:** Set via `VITE_API_BASE_URL_PROD`
+
+See `src/config/api.ts` for API endpoint definitions and helper functions.
+
+## Development
+
+### Adding Components
+
+UI components are based on shadcn/ui and can be found in `src/components/ui/`. When adding new features:
+
+1. Use existing components from `src/components/ui/`
+2. Follow established component patterns
+3. Maintain consistent styling with Tailwind classes
+4. Use utility functions from `lib/utils.ts`
+
+### Environment Variables in Code
+
+Access environment variables using `import.meta.env`:
+
+```typescript
+const apiUrl = import.meta.env.VITE_API_BASE_URL_DEV;
+const appName = import.meta.env.VITE_APP_NAME;
+```
+
+TypeScript types for environment variables are defined in `src/vite-env.d.ts`.
+
+## Building for Production
+
+```bash
+npm run build
+```
+
+This creates an optimized production build in the `dist/` directory.
+
+## License
+
+ISC
+
+## Project Information
+
+For more details about the project architecture and specifications, see `../tedx-quiz-app.md` and `../CLAUDE.md`.

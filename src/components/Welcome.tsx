@@ -3,11 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import { toPersianNumbers } from '../utils/persianNumbers';
 import { motion } from 'framer-motion';
+import { submitWelcomeForm } from '../config/api';
 
 interface WelcomeProps {
   onStart: () => void;
@@ -17,16 +16,20 @@ interface WelcomeProps {
 export interface UserData {
   firstName: string;
   lastName: string;
-  age: number;
-  gender: 'male' | 'female' | 'other';
+  mobileNumber: string;
+  country: string;
+  city: string;
 }
 
 export function Welcome({ onStart, language }: WelcomeProps) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [age, setAge] = useState('');
-  const [gender, setGender] = useState<'male' | 'female' | 'other'>('male');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [country, setCountry] = useState('');
+  const [city, setCity] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string>('');
 
   const isRTL = language === 'fa';
 
@@ -34,42 +37,75 @@ export function Welcome({ onStart, language }: WelcomeProps) {
     const newErrors: Record<string, string> = {};
 
     if (!firstName.trim()) {
-      newErrors.firstName = language === 'fa' ? 'نام الزامی است' : 'First name is required';
+      newErrors.firstName = language === 'fa' ? 'نام الزامی است' : 'Name is required';
     }
 
     if (!lastName.trim()) {
       newErrors.lastName = language === 'fa' ? 'نام خانوادگی الزامی است' : 'Last name is required';
     }
 
-    const ageNum = parseInt(age);
-    if (!age || isNaN(ageNum) || ageNum < 10 || ageNum > 120) {
-      newErrors.age = language === 'fa' 
-        ? 'سن باید بین ۱۰ تا ۱۲۰ سال باشد' 
-        : 'Age must be between 10 and 120';
+    if (!mobileNumber.trim()) {
+      newErrors.mobileNumber = language === 'fa' ? 'شماره موبایل الزامی است' : 'Mobile number is required';
+    } else if (!/^[0-9+\-\s()]+$/.test(mobileNumber)) {
+      newErrors.mobileNumber = language === 'fa' ? 'شماره موبایل معتبر نیست' : 'Invalid mobile number';
+    }
+
+    if (!country.trim()) {
+      newErrors.country = language === 'fa' ? 'کشور الزامی است' : 'Country is required';
+    }
+
+    if (!city.trim()) {
+      newErrors.city = language === 'fa' ? 'شهر الزامی است' : 'City is required';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Clear previous API error
+    setApiError('');
+
     if (validateForm()) {
       const userData: UserData = {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
-        age: parseInt(age),
-        gender
+        mobileNumber: mobileNumber.trim(),
+        country: country.trim(),
+        city: city.trim()
       };
-      
-      // Save user data to localStorage
-      localStorage.setItem('userData', JSON.stringify(userData));
-      onStart();
+
+      setIsLoading(true);
+
+      try {
+        // Send data to backend API
+        const response = await submitWelcomeForm(userData);
+
+        if (response.success) {
+          // Save user data to localStorage along with submission ID
+          localStorage.setItem('userData', JSON.stringify({
+            ...userData,
+            submissionId: response.data._id
+          }));
+
+          // Proceed to quiz
+          onStart();
+        }
+      } catch (error) {
+        // Handle API error
+        const errorMessage = error instanceof Error ? error.message :
+          (language === 'fa'
+            ? 'خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید.'
+            : 'Error submitting form. Please try again.');
+        setApiError(errorMessage);
+        console.error('Failed to submit form:', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
-
-  // Generate age options
-  const ageOptions = Array.from({ length: 111 }, (_, i) => i + 10);
 
   return (
     <motion.div
@@ -137,13 +173,13 @@ export function Welcome({ onStart, language }: WelcomeProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">
-                  {language === 'fa' ? 'نام' : 'First Name'}
+                  {language === 'fa' ? 'نام' : 'Name'}
                 </Label>
                 <Input
                   id="firstName"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder={language === 'fa' ? 'نام خود را وارد کنید' : 'Enter your first name'}
+                  placeholder={language === 'fa' ? 'نام خود را وارد کنید' : 'Enter your name'}
                   className={errors.firstName ? 'border-red-500' : ''}
                 />
                 {errors.firstName && (
@@ -168,54 +204,53 @@ export function Welcome({ onStart, language }: WelcomeProps) {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="mobileNumber">
+                {language === 'fa' ? 'شماره موبایل' : 'Mobile Number'}
+              </Label>
+              <Input
+                id="mobileNumber"
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value)}
+                placeholder={language === 'fa' ? 'شماره موبایل خود را وارد کنید' : 'Enter your mobile number'}
+                className={errors.mobileNumber ? 'border-red-500' : ''}
+              />
+              {errors.mobileNumber && (
+                <p className="text-sm text-red-500">{errors.mobileNumber}</p>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="age">
-                  {language === 'fa' ? 'سن' : 'Age'}
+                <Label htmlFor="country">
+                  {language === 'fa' ? 'کشور' : 'Country'}
                 </Label>
-                <Select value={age} onValueChange={setAge}>
-                  <SelectTrigger className={errors.age ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={language === 'fa' ? 'سن خود را انتخاب کنید' : 'Select your age'} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ageOptions.map((ageOption) => (
-                      <SelectItem key={ageOption} value={ageOption.toString()}>
-                        {language === 'fa' 
-                          ? `${toPersianNumbers(ageOption)} سال`
-                          : `${ageOption} years`}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.age && (
-                  <p className="text-sm text-red-500">{errors.age}</p>
+                <Input
+                  id="country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  placeholder={language === 'fa' ? 'کشور خود را وارد کنید' : 'Enter your country'}
+                  className={errors.country ? 'border-red-500' : ''}
+                />
+                {errors.country && (
+                  <p className="text-sm text-red-500">{errors.country}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label>
-                  {language === 'fa' ? 'جنسیت' : 'Gender'}
+                <Label htmlFor="city">
+                  {language === 'fa' ? 'شهر' : 'City'}
                 </Label>
-                <RadioGroup value={gender} onValueChange={(value) => setGender(value as typeof gender)}>
-                  <div className="flex items-center space-x-2 space-x-reverse">
-                    <RadioGroupItem value="male" id="male" />
-                    <Label htmlFor="male" className="cursor-pointer">
-                      {language === 'fa' ? 'مرد' : 'Male'}
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2 space-x-reverse">
-                    <RadioGroupItem value="female" id="female" />
-                    <Label htmlFor="female" className="cursor-pointer">
-                      {language === 'fa' ? 'زن' : 'Female'}
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2 space-x-reverse">
-                    <RadioGroupItem value="other" id="other" />
-                    <Label htmlFor="other" className="cursor-pointer">
-                      {language === 'fa' ? 'سایر' : 'Other'}
-                    </Label>
-                  </div>
-                </RadioGroup>
+                <Input
+                  id="city"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder={language === 'fa' ? 'شهر خود را وارد کنید' : 'Enter your city'}
+                  className={errors.city ? 'border-red-500' : ''}
+                />
+                {errors.city && (
+                  <p className="text-sm text-red-500">{errors.city}</p>
+                )}
               </div>
             </div>
           </div>
@@ -248,18 +283,40 @@ export function Welcome({ onStart, language }: WelcomeProps) {
             </ul>
           </div>
 
+          {apiError && (
+            <div className="p-3 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg">
+              <p className="text-sm text-red-600 dark:text-red-400 text-center">
+                {apiError}
+              </p>
+            </div>
+          )}
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 1.4 }}
           >
             <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: isLoading ? 1 : 1.02 }}
+              whileTap={{ scale: isLoading ? 1 : 0.98 }}
             >
-              <Button type="submit" className="w-full" size="lg">
-                <span>{language === 'fa' ? 'شروع تست' : 'Start Test'}</span>
-                {isRTL ? <ArrowLeft className="ml-2 h-5 w-5" /> : <ArrowRight className="ml-2 h-5 w-5" />}
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <span>{language === 'fa' ? 'در حال ارسال...' : 'Submitting...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{language === 'fa' ? 'شروع تست' : 'Start Test'}</span>
+                    {isRTL ? <ArrowLeft className="ml-2 h-5 w-5" /> : <ArrowRight className="ml-2 h-5 w-5" />}
+                  </>
+                )}
               </Button>
             </motion.div>
           </motion.div>
