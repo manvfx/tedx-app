@@ -123,8 +123,8 @@ function App() {
         {/* Footer */}
         <footer className="text-center py-3 sm:py-4 px-3 text-xs sm:text-sm text-muted-foreground">
           {language === 'fa'
-            ? `© ${toPersianNumbers(2025)} تولید شده توسط تیم روانگپ و قدرت گرفته از هوش مصنوعی لیدوما TEDx`
-            : '© 2025 TEDx produced by the Ravangap team'}
+            ? `© ${toPersianNumbers(2025)} TEDx قدرت‌گرفته از هوش مصنوعی روانگپ`
+            : '© 2025 TEDx 2025, powered by Ravangap AI and supported by Lidoma AI team'}
         </footer>
       </div>
     </Direction.Provider>
