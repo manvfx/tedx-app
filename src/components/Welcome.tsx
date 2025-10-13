@@ -113,7 +113,7 @@ export function Welcome({ onStart, language }: WelcomeProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <Card className="max-w-3xl mx-auto w-[600px]" dir={isRTL ? 'rtl' : 'ltr'}>
+      <Card className="max-w-3xl mx-auto w-full" dir={isRTL ? 'rtl' : 'ltr'}>
         <CardHeader className="text-center">
           <motion.div 
             className="flex justify-center mb-4"
@@ -121,10 +121,10 @@ export function Welcome({ onStart, language }: WelcomeProps) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <img 
-              src="/logo-white.png" 
-              alt="TEDx Logo" 
-              className="h-16 w-auto"
+            <img
+              src="/logo-white.png"
+              alt="TEDx Logo"
+              className="h-12 sm:h-16 w-auto"
             />
           </motion.div>
           <motion.div
@@ -132,8 +132,8 @@ export function Welcome({ onStart, language }: WelcomeProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <CardTitle className="text-3xl font-bold mb-2">
-              {language === 'fa' 
+            <CardTitle className="text-2xl sm:text-3xl font-bold mb-2">
+              {language === 'fa'
                 ? 'تست کشف کهن‌الگوی شخصیتی'
                 : 'Personality Archetype Discovery Test'}
             </CardTitle>
@@ -143,7 +143,7 @@ export function Welcome({ onStart, language }: WelcomeProps) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
           >
-            <CardDescription className="text-lg">
+            <CardDescription className="text-base sm:text-lg">
               {language === 'fa'
                 ? 'کشف کهن‌الگوی اساطیری ایرانی خود در ۶۰ سوال'
                 : 'Discover your Iranian mythological archetype in 60 questions'}

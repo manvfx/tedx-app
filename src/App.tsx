@@ -69,37 +69,38 @@ function App() {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         {/* Header */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b">
-          <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <img 
-                src="/logo-black.png" 
-                alt="TEDx Logo" 
-                className="h-8 w-auto dark:hidden"
+          <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <img
+                src="/logo-black.png"
+                alt="TEDx Logo"
+                className="h-6 sm:h-8 w-auto dark:hidden"
               />
-              <img 
-                src="/logo-white.png" 
-                alt="TEDx Logo" 
-                className="h-8 w-auto hidden dark:block"
+              <img
+                src="/logo-white.png"
+                alt="TEDx Logo"
+                className="h-6 sm:h-8 w-auto hidden dark:block"
               />
-              <span className="font-bold text-lg">
+              <span className="font-bold text-base sm:text-lg">
                 {language === 'fa' ? 'تست شخصیت' : 'Personality Test'}
               </span>
             </div>
-            
+
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleLanguage}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
             >
-              <Globe className="h-4 w-4" />
-              {language === 'en' ? 'فارسی' : 'English'}
+              <Globe className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">{language === 'en' ? 'فارسی' : 'English'}</span>
+              <span className="inline sm:hidden">{language === 'en' ? 'FA' : 'EN'}</span>
             </Button>
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="container mx-auto px-4 pt-20 pb-8">
+        <main className="container mx-auto px-3 sm:px-4 pt-16 sm:pt-20 pb-6 sm:pb-8">
           <div className="flex items-center justify-center min-h-[calc(100vh-8rem)]">
             {appState === 'welcome' && (
               <Welcome onStart={handleStart} language={language} />
@@ -120,8 +121,8 @@ function App() {
         </main>
 
         {/* Footer */}
-        <footer className="text-center py-4 text-sm text-muted-foreground">
-          {language === 'fa' 
+        <footer className="text-center py-3 sm:py-4 px-3 text-xs sm:text-sm text-muted-foreground">
+          {language === 'fa'
             ? `© ${toPersianNumbers(2025)} تولید شده توسط تیم روانگپ و قدرت گرفته از هوش مصنوعی لیدوما TEDx`
             : '© 2025 TEDx produced by the Ravangap team'}
         </footer>

@@ -114,7 +114,7 @@ export function Results({ scores, onRestart, language }: ResultsProps) {
                 <motion.img
                   src={`/persons/${primaryArchetype?.id === 'fereydun' ? 'sam' : primaryArchetype?.id}.png`}
                   alt={language === 'fa' ? primaryArchetype?.nameFa : primaryArchetype?.name}
-                  className="w-24 h-24 object-cover rounded-full border-4 shadow-lg"
+                  className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-full border-4 shadow-lg"
                   style={{ borderColor: primaryArchetype?.color }}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -135,12 +135,12 @@ export function Results({ scores, onRestart, language }: ResultsProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              <CardTitle className="text-3xl font-bold mb-2">
+              <CardTitle className="text-2xl sm:text-3xl font-bold mb-2">
                 {language === 'fa' ? 'کهن‌الگوی غالب شما' : 'Your Dominant Archetype'}
               </CardTitle>
               <div className="space-y-2">
-                <motion.h2 
-                  className="text-4xl font-bold" 
+                <motion.h2
+                  className="text-3xl sm:text-4xl font-bold"
                   style={{ color: primaryArchetype?.color }}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -148,8 +148,8 @@ export function Results({ scores, onRestart, language }: ResultsProps) {
                 >
                   {language === 'fa' ? primaryArchetype?.nameFa : primaryArchetype?.name}
                 </motion.h2>
-                <motion.p 
-                  className="text-xl text-muted-foreground"
+                <motion.p
+                  className="text-lg sm:text-xl text-muted-foreground"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5, delay: 1.2 }}
@@ -171,8 +171,8 @@ export function Results({ scores, onRestart, language }: ResultsProps) {
             </motion.div>
           </CardHeader>
         <CardContent>
-          <motion.p 
-            className="text-center text-lg leading-relaxed mb-6"
+          <motion.p
+            className="text-center text-base sm:text-lg leading-relaxed mb-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.6 }}
@@ -180,8 +180,8 @@ export function Results({ scores, onRestart, language }: ResultsProps) {
             {language === 'fa' ? primaryArchetype?.descriptionFa : primaryArchetype?.description}
           </motion.p>
           
-          <motion.div 
-            className="grid md:grid-cols-3 gap-4 text-center"
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 1.8 }}
@@ -234,14 +234,14 @@ export function Results({ scores, onRestart, language }: ResultsProps) {
 
       {/* Detailed Results Tabs */}
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all">
+        <TabsList className="grid w-full grid-cols-3 h-auto">
+          <TabsTrigger value="all" className="text-xs sm:text-sm py-2">
             {language === 'fa' ? 'همه نتایج' : 'All Results'}
           </TabsTrigger>
-          <TabsTrigger value="strengths">
+          <TabsTrigger value="strengths" className="text-xs sm:text-sm py-2">
             {language === 'fa' ? 'نقاط قوت' : 'Strengths'}
           </TabsTrigger>
-          <TabsTrigger value="insights">
+          <TabsTrigger value="insights" className="text-xs sm:text-sm py-2">
             {language === 'fa' ? 'بینش‌ها' : 'Insights'}
           </TabsTrigger>
         </TabsList>

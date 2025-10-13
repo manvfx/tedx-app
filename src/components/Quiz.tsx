@@ -100,9 +100,9 @@ export function Quiz({ onComplete, language }: QuizProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="max-w-3xl mx-auto w-[600px]" dir={isRTL ? 'rtl' : 'ltr'}>
+      <Card className="max-w-3xl mx-auto w-full" dir={isRTL ? 'rtl' : 'ltr'}>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-xl sm:text-2xl font-bold text-center">
             {language === 'fa' ? 'تست کشف کهن‌الگوی شخصیتی' : 'Personality Archetype Discovery Test'}
           </CardTitle>
           <CardDescription className="text-center">
@@ -127,9 +127,9 @@ export function Quiz({ onComplete, language }: QuizProps) {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: isRTL ? 30 : -30 }}
               transition={{ duration: 0.3 }}
-              className="min-h-[150px] py-4 flex items-center"
+              className="min-h-[120px] sm:min-h-[150px] py-4 flex items-center"
             >
-              <p className="text-lg leading-relaxed w-full">
+              <p className="text-base sm:text-lg leading-relaxed w-full">
                 {language === 'fa' ? question.textFa : question.text}
               </p>
             </motion.div>
@@ -148,7 +148,7 @@ export function Quiz({ onComplete, language }: QuizProps) {
             </p>
             
             <RadioGroup value={selectedValue} onValueChange={handleAnswer}>
-              <div className="space-y-3 min-h-[200px]">
+              <div className="space-y-2 sm:space-y-3">
                 {likertOptions.map((option, index) => (
                   <motion.div
                     key={option.value}
@@ -158,12 +158,12 @@ export function Quiz({ onComplete, language }: QuizProps) {
                     className="flex items-center space-x-2 space-x-reverse"
                   >
                     <RadioGroupItem value={option.value.toString()} id={`option-${option.value}`} />
-                    <Label 
-                      htmlFor={`option-${option.value}`} 
-                      className="cursor-pointer flex-1 py-3 flex justify-between items-center hover:bg-muted/50 rounded-md px-2 transition-colors"
+                    <Label
+                      htmlFor={`option-${option.value}`}
+                      className="cursor-pointer flex-1 py-2 sm:py-3 flex justify-between items-center hover:bg-muted/50 rounded-md px-2 transition-colors text-sm sm:text-base"
                     >
                       <span>{language === 'fa' ? option.labelFa : option.labelEn}</span>
-                      <span className="text-sm text-muted-foreground font-medium">
+                      <span className="text-xs sm:text-sm text-muted-foreground font-medium">
                         {language === 'fa' ? option.numberFa : option.value}
                       </span>
                     </Label>

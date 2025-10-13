@@ -173,3 +173,37 @@ input:focus-visible,
     font-size: 16px;
   }
 }
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+  /* Reduce card padding on mobile */
+  [class*="CardContent"] {
+    padding: 1rem;
+  }
+
+  [class*="CardHeader"] {
+    padding: 1rem;
+  }
+
+  /* Better button sizing on mobile */
+  button {
+    min-height: 44px; /* Touch-friendly size */
+  }
+
+  /* Optimize spacing */
+  .space-y-6 > * + * {
+    margin-top: 1rem;
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 0.75rem;
+  }
+}
+
+/* Tablet improvements */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
