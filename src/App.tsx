@@ -11,10 +11,19 @@ import './App.css';
 type AppState = 'welcome' | 'quiz' | 'results';
 type Language = 'en' | 'fa';
 
+interface UserData {
+  id: string;
+  firstName: string;
+  lastName: string;
+  mobileNumber: string;
+}
+
 function App() {
   const [appState, setAppState] = useState<AppState>('welcome');
   const [language, setLanguage] = useState<Language>('fa');
   const [quizScores, setQuizScores] = useState<Record<string, number>>({});
+  const [quizResponses, setQuizResponses] = useState<Record<number, number>>({});
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   // Load saved state from localStorage
   useEffect(() => {
@@ -48,18 +57,26 @@ function App() {
     updateDocumentDirection(newLanguage);
   };
 
-  const handleStart = () => {
+  const handleStart = (user?: UserData) => {
+    if (user) {
+      setUserData(user);
+    }
     setAppState('quiz');
   };
 
-  const handleQuizComplete = (scores: Record<string, number>) => {
+  const handleQuizComplete = (scores: Record<string, number>, responses?: Record<number, number>) => {
     setQuizScores(scores);
+    if (responses) {
+      setQuizResponses(responses);
+    }
     setAppState('results');
   };
 
   const handleRestart = () => {
     setAppState('welcome');
     setQuizScores({});
+    setQuizResponses({});
+    setUserData(null);
     localStorage.removeItem('quizProgress');
     localStorage.removeItem('userData');
   };
@@ -111,9 +128,16 @@ function App() {
             )}
             
             {appState === 'results' && (
-              <Results 
-                scores={quizScores} 
-                onRestart={handleRestart} 
+              <Results
+                scores={quizScores}
+                responses={quizResponses}
+                userId={userData?.id}
+                userData={userData ? {
+                  firstName: userData.firstName,
+                  lastName: userData.lastName,
+                  mobileNumber: userData.mobileNumber
+                } : undefined}
+                onRestart={handleRestart}
                 language={language}
               />
             )}

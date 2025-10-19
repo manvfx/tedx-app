@@ -8,17 +8,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Share2, RotateCcw, Trophy, TrendingUp, AlertTriangle } from 'lucide-react';
 import { toPersianNumbers } from '../utils/persianNumbers';
 import { motion } from 'framer-motion';
+import { saveQuizSubmission } from '../utils/api';
 
 interface ResultsProps {
   scores: Record<string, number>;
   onRestart: () => void;
   language: 'en' | 'fa';
+  responses?: Record<number, number>;
+  userId?: string;
+  userData?: {
+    firstName: string;
+    lastName: string;
+    mobileNumber: string;
+  };
 }
 
-export function Results({ scores, onRestart, language }: ResultsProps) {
+export function Results({ scores, onRestart, language, responses, userId, userData }: ResultsProps) {
   const [percentages, setPercentages] = useState<Record<string, number>>({});
   const [topArchetypes, setTopArchetypes] = useState<string[]>([]);
-  
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   useEffect(() => {
     // Calculate percentages
     const maxScorePerArchetype = 30; // 6 questions × 5 max points
@@ -44,7 +54,58 @@ export function Results({ scores, onRestart, language }: ResultsProps) {
       .map(([archetype]) => archetype);
     
     setTopArchetypes(sorted);
+
+    // Save quiz submission to backend if all required data is available
+    if (userId && userData && responses && topArchetypes.length > 0 && !isSaving) {
+      saveQuizToBackend(sorted, calculatedPercentages);
+    }
   }, [scores]);
+
+  const saveQuizToBackend = async (
+    sortedArchetypes: string[],
+    calculatedPercentages: Record<string, number>
+  ) => {
+    if (isSaving) return;
+
+    setIsSaving(true);
+    setSaveError(null);
+
+    try {
+      // Prepare the submission data
+      const submissionData = {
+        userId: userId!,
+        firstName: userData!.firstName,
+        lastName: userData!.lastName,
+        mobileNumber: userData!.mobileNumber,
+        responses: responses || {},
+        scores,
+        percentages: calculatedPercentages,
+        primaryArchetype: sortedArchetypes[0],
+        secondaryArchetype: sortedArchetypes[1] || undefined,
+        weakestArchetype: sortedArchetypes[sortedArchetypes.length - 1],
+        primaryArchetypePercentage: calculatedPercentages[sortedArchetypes[0]] || 0,
+        language
+      };
+
+      // Save to backend
+      const response = await saveQuizSubmission(submissionData);
+
+      if (response.success) {
+        // Store submission ID in localStorage for reference
+        localStorage.setItem('lastQuizSubmissionId', response.data?.submissionId || '');
+        console.log('Quiz submission saved successfully:', response.data);
+      } else {
+        throw new Error(response.message || 'Failed to save quiz submission');
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      console.error('Error saving quiz submission:', errorMessage);
+      setSaveError(errorMessage);
+      // Don't throw - allow user to see results even if save fails
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleShare = () => {
     const primaryArchetype = archetypes.find(a => a.id === topArchetypes[0]);
@@ -96,6 +157,28 @@ export function Results({ scores, onRestart, language }: ResultsProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
+      {/* Save Status Message */}
+      {isSaving && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 text-center text-sm text-blue-700 dark:text-blue-300"
+        >
+          {language === 'fa' ? 'در حال ذخیره نتایج...' : 'Saving your results...'}
+        </motion.div>
+      )}
+
+      {saveError && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 text-center text-sm text-yellow-700 dark:text-yellow-300"
+        >
+          {language === 'fa' ? 'خطا در ذخیره: ' : 'Save Error: '}
+          {saveError}
+        </motion.div>
+      )}
+
       {/* Main Result Card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}

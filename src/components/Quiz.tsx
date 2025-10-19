@@ -11,7 +11,7 @@ import { toPersianNumbers } from '../utils/persianNumbers';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface QuizProps {
-  onComplete: (scores: Record<string, number>) => void;
+  onComplete: (scores: Record<string, number>, responses?: Record<number, number>) => void;
   language: 'en' | 'fa';
 }
 
@@ -59,7 +59,7 @@ export function Quiz({ onComplete, language }: QuizProps) {
         // Calculate scores
         const scores = calculateScores(newAnswers);
         localStorage.removeItem('quizProgress'); // Clear saved progress
-        onComplete(scores);
+        onComplete(scores, newAnswers);
       }
     }
   };
