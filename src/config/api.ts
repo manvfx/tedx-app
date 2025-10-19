@@ -24,6 +24,12 @@ export const API_ENDPOINTS = {
   health: `${API_BASE_URL}/api/health`,
   welcome: `${API_BASE_URL}/api/welcome`,
   welcomeById: (id: string) => `${API_BASE_URL}/api/welcome/${id}`,
+  // Quiz Session Recovery endpoints
+  quizSessionStart: `${API_BASE_URL}/api/quiz-session/start`,
+  quizSessionByMobile: (mobileNumber: string) => `${API_BASE_URL}/api/quiz-session/${mobileNumber}`,
+  quizSessionProgress: (sessionId: string) => `${API_BASE_URL}/api/quiz-session/${sessionId}/progress`,
+  quizSessionComplete: (sessionId: string) => `${API_BASE_URL}/api/quiz-session/${sessionId}/complete`,
+  quizSessionAbandon: (sessionId: string) => `${API_BASE_URL}/api/quiz-session/${sessionId}/abandon`,
   // Quiz endpoints
   quiz: `${API_BASE_URL}/api/quiz`,
   quizById: (id: string) => `${API_BASE_URL}/api/quiz/${id}`,
@@ -170,5 +176,48 @@ export const getAdminUsersCompletedQuiz = async (filters?: {
 export const getAdminStatistics = async () => {
   return apiRequest(API_ENDPOINTS.adminStatistics, {
     method: 'GET',
+  });
+};
+
+// Quiz Session Recovery Functions
+export const startQuizSession = async (formData: {
+  firstName: string;
+  lastName: string;
+  mobileNumber: string;
+  language?: 'en' | 'fa';
+}) => {
+  return apiRequest(API_ENDPOINTS.quizSessionStart, {
+    method: 'POST',
+    body: JSON.stringify(formData),
+  });
+};
+
+export const checkActiveSession = async (mobileNumber: string) => {
+  try {
+    return await apiRequest(API_ENDPOINTS.quizSessionByMobile(mobileNumber), {
+      method: 'GET',
+    });
+  } catch (error) {
+    // No active session found
+    return null;
+  }
+};
+
+export const saveQuizProgress = async (sessionId: string, currentQuestion: number, responses: Record<number, number>) => {
+  return apiRequest(API_ENDPOINTS.quizSessionProgress(sessionId), {
+    method: 'PUT',
+    body: JSON.stringify({ currentQuestion, responses }),
+  });
+};
+
+export const completeQuizSession = async (sessionId: string) => {
+  return apiRequest(API_ENDPOINTS.quizSessionComplete(sessionId), {
+    method: 'PUT',
+  });
+};
+
+export const abandonQuizSession = async (sessionId: string) => {
+  return apiRequest(API_ENDPOINTS.quizSessionAbandon(sessionId), {
+    method: 'PUT',
   });
 };
