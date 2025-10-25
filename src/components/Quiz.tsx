@@ -45,13 +45,26 @@ export function Quiz({ onComplete, language }: QuizProps) {
 
   const handleAnswer = (value: string) => {
     setSelectedValue(value);
+    // Auto-advance to next question
+    const newAnswers = { ...answers, [questions[currentQuestion].id]: parseInt(value) };
+    setAnswers(newAnswers);
+
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+      setSelectedValue(newAnswers[questions[currentQuestion + 1]?.id]?.toString() || '');
+    } else {
+      // Calculate scores
+      const scores = calculateScores(newAnswers);
+      localStorage.removeItem('quizProgress'); // Clear saved progress
+      onComplete(scores, newAnswers);
+    }
   };
 
   const handleNext = () => {
     if (selectedValue) {
       const newAnswers = { ...answers, [questions[currentQuestion].id]: parseInt(selectedValue) };
       setAnswers(newAnswers);
-      
+
       if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
         setSelectedValue(answers[questions[currentQuestion + 1]?.id]?.toString() || '');
