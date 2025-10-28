@@ -187,8 +187,8 @@ export function Results({ scores, onRestart, language, responses, userId, userDa
       >
         <Card className="border-2" style={{ borderColor: primaryArchetype?.color }}>
           <CardHeader className="text-center pb-4">
-            <motion.div 
-              className="flex justify-center mb-4"
+            <motion.div
+              className="flex flex-col items-center gap-4 mb-4"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -212,6 +212,34 @@ export function Results({ scores, onRestart, language, responses, userId, userDa
                   <Trophy className="h-8 w-8 text-yellow-500" />
                 </motion.div>
               </div>
+
+              {/* Video Player */}
+              {primaryArchetype?.id !== 'simorgh' && primaryArchetype?.id !== 'fereydun' && (
+                <motion.div
+                  className="w-full max-w-md"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.8 }}
+                >
+                  <video
+                    className="w-full rounded-lg shadow-lg border-2"
+                    style={{ borderColor: primaryArchetype?.color }}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls
+                  >
+                    <source
+                      src={`/videos/${primaryArchetype?.id === 'fereydun' ? 'sam' : primaryArchetype?.id}.mp4`}
+                      type="video/mp4"
+                    />
+                    {language === 'fa'
+                      ? 'مرورگر شما از پخش ویدیو پشتیبانی نمی‌کند.'
+                      : 'Your browser does not support the video tag.'}
+                  </video>
+                </motion.div>
+              )}
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
