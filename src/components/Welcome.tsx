@@ -46,8 +46,10 @@ export function Welcome({ onStart, language }: WelcomeProps) {
 
     if (!mobileNumber.trim()) {
       newErrors.mobileNumber = language === 'fa' ? 'شماره موبایل الزامی است' : 'Mobile number is required';
-    } else if (!/^[0-9+\-\s()]+$/.test(mobileNumber)) {
+    } else if (!/^[0-9]+$/.test(mobileNumber)) {
       newErrors.mobileNumber = language === 'fa' ? 'شماره موبایل معتبر نیست' : 'Invalid mobile number';
+    } else if (mobileNumber.length < 10) {
+      newErrors.mobileNumber = language === 'fa' ? 'شماره موبایل باید حداقل ۱۰ رقم باشد' : 'Mobile number must be at least 10 digits';
     }
 
     if (!country.trim()) {
@@ -210,10 +212,16 @@ export function Welcome({ onStart, language }: WelcomeProps) {
               </Label>
               <Input
                 id="mobileNumber"
+                type="tel"
                 value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  setMobileNumber(value);
+                }}
                 placeholder={language === 'fa' ? 'شماره موبایل خود را وارد کنید' : 'Enter your mobile number'}
                 className={errors.mobileNumber ? 'border-red-500' : ''}
+                inputMode="numeric"
+                pattern="[0-9]*"
               />
               {errors.mobileNumber && (
                 <p className="text-sm text-red-500">{errors.mobileNumber}</p>
