@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import { toPersianNumbers } from '../utils/persianNumbers';
 import { motion } from 'framer-motion';
@@ -17,6 +18,7 @@ export interface UserData {
   firstName: string;
   lastName: string;
   mobileNumber: string;
+  gender: string;
   country: string;
   city: string;
 }
@@ -25,6 +27,7 @@ export function Welcome({ onStart, language }: WelcomeProps) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
+  const [gender, setGender] = useState('');
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -52,6 +55,10 @@ export function Welcome({ onStart, language }: WelcomeProps) {
       newErrors.mobileNumber = language === 'fa' ? 'شماره موبایل باید حداقل ۱۰ رقم باشد' : 'Mobile number must be at least 10 digits';
     }
 
+    if (!gender) {
+      newErrors.gender = language === 'fa' ? 'جنسیت الزامی است' : 'Gender is required';
+    }
+
     if (!country.trim()) {
       newErrors.country = language === 'fa' ? 'کشور الزامی است' : 'Country is required';
     }
@@ -75,6 +82,7 @@ export function Welcome({ onStart, language }: WelcomeProps) {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         mobileNumber: mobileNumber.trim(),
+        gender: gender,
         country: country.trim(),
         city: city.trim()
       };
@@ -228,6 +236,26 @@ export function Welcome({ onStart, language }: WelcomeProps) {
               )}
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="gender">
+                {language === 'fa' ? 'جنسیت' : 'Gender'}
+              </Label>
+              <Select value={gender} onValueChange={setGender}>
+                <SelectTrigger className={errors.gender ? 'border-red-500' : ''}>
+                  <SelectValue placeholder={language === 'fa' ? 'جنسیت خود را انتخاب کنید' : 'Select your gender'} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="male">{language === 'fa' ? 'مرد' : 'Male'}</SelectItem>
+                  <SelectItem value="female">{language === 'fa' ? 'زن' : 'Female'}</SelectItem>
+                  <SelectItem value="other">{language === 'fa' ? 'سایر' : 'Other'}</SelectItem>
+                  <SelectItem value="prefer-not-to-say">{language === 'fa' ? 'ترجیح می‌دهم نگویم' : 'Prefer not to say'}</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.gender && (
+                <p className="text-sm text-red-500">{errors.gender}</p>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="country">
@@ -291,6 +319,82 @@ export function Welcome({ onStart, language }: WelcomeProps) {
             </ul>
           </div>
 
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg space-y-3 text-sm">
+            {language === 'fa' ? (
+              <>
+                <h3 className="font-bold text-base">
+                  تست «کشف کهن‌الگوی شاهنامه»
+                </h3>
+                <h4 className="font-semibold text-sm">
+                  از اسطوره تا روان‌سنجی: نقشه‌های درونی شما
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">
+                  تست «کشف کهن‌الگوی شاهنامه» یک ابزار روان‌سنجی است که با هدف ایجاد یک پل ارتباطی میان ناخودآگاه جمعی ایرانی (مفاهیم یونگی شاهنامه) و مدل‌های شخصیت‌شناسی استاندارد جهانی طراحی شده است. این تست برای ارائه یک پروفایل شخصیتی عمیق، منحصربه‌فرد و کاربردی بر اساس ۱۰ شخصیت برجسته شاهنامه توسعه یافته است.
+                </p>
+                <div className="space-y-2">
+                  <h5 className="font-semibold">۱. مبانی تئوریک: کهن‌الگوهای یونگی و اساطیر ایرانی</h5>
+                  <p className="text-muted-foreground leading-relaxed">
+                    هسته اصلی این تست بر نظریه کهن‌الگوها (Archetypes) کارل گوستاو یونگ استوار است. شخصیت‌هایی چون رستم، سیمرغ، جمشید، کاوه، گردآفرید، آرش، ضحاک، فریدون، رودابه و منیژه به عنوان صورت‌های ازلی (الگوهای رفتاری و فکری) در نظر گرفته شده‌اند که ریشه در اساطیر ایران باستان و شاهنامه دارند. هر کهن‌الگو دارای دو بُعد حیاتی است که در نتیجه تست منعکس می‌شود: هوش برجسته (نقطه قوت) و سایه شخصیتی (چالش).
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h5 className="font-semibold">۲. استانداردهای روان‌سنجی: اتصال به مدل‌های جهانی</h5>
+                  <p className="text-muted-foreground leading-relaxed">
+                    برای تضمین اعتبار و جامعیت روان‌سنجی، ساختار این تست با شاخص‌های دو مدل استاندارد روان‌شناختی مقایسه و طراحی شده است:
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed mr-4">
+                    <strong>الف. مدل NEO-PI-R (مدل پنج عاملی شخصیت):</strong> این مدل برای پوشش‌دهی ابعاد اصلی شخصیت سالم به کار رفته است. به عنوان مثال، جمشید با سنجش وجدان‌گرایی (نظم، دقت و کمال‌گرایی)، سیمرغ با باز بودن به تجربه (تفکر عمیق و خودشناسی) و رستم با برون‌گرایی (عمل‌گرایی، رقابت و اراده قوی) همبسته شده‌اند.
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed mr-4">
+                    <strong>ب. MMPI (آزمون چندمحوری شخصیت مینه سوتا):</strong> برای تحلیل دقیق‌تر ابعاد چالش‌برانگیز و «سایه» شخصیتی، از مقیاس‌های MMPI برای تعریف چالش‌های کهن‌الگوها استفاده شده است.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h5 className="font-semibold">۳. مکانیسم و روش نمره‌گذاری (لیکرت ۵ درجه‌ای)</h5>
+                  <p className="text-muted-foreground leading-relaxed">
+                    این تست شامل ۶۰ جمله خبری است که هر یک از ۱۰ کهن‌الگو (هوش و سایه) را هدف قرار می‌دهند. کاربر میزان موافقت یا مخالفت خود را روی یک مقیاس لیکرت ۵ درجه‌ای (از «کاملاً مخالفم» تا «کاملاً موافقم») مشخص می‌کند. در نهایت، امتیاز هر ۱۰ کهن‌الگو محاسبه شده و یک پروفایل شخصیتی کامل ارائه می‌دهد.
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3 className="font-bold text-base">
+                  Discover Shahnameh Archetype Test
+                </h3>
+                <h4 className="font-semibold text-sm">
+                  From Myth to Psychometrics: Your Inner Maps
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">
+                  The "Discover Shahnameh Archetype" test is a psychometric tool designed to create a bridge between the Iranian collective unconscious (Jungian concepts from Shahnameh) and standard global personality assessment models. This test is developed to provide a deep, unique, and practical personality profile based on 10 prominent characters from Shahnameh.
+                </p>
+                <div className="space-y-2">
+                  <h5 className="font-semibold">1. Theoretical Foundation: Jungian Archetypes and Iranian Mythology</h5>
+                  <p className="text-muted-foreground leading-relaxed">
+                    The core of this test is based on Carl Gustav Jung's theory of Archetypes. Characters such as Rostam, Simorgh, Jamshid, Kaveh, Gordafarid, Arash, Zahhak, Fereydun, Roudabeh, and Manizheh are considered as primordial forms (behavioral and cognitive patterns) rooted in ancient Iranian mythology and Shahnameh. Each archetype has two vital dimensions reflected in the test results: dominant intelligence (strength) and shadow personality (challenge).
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h5 className="font-semibold">2. Psychometric Standards: Connection to Global Models</h5>
+                  <p className="text-muted-foreground leading-relaxed">
+                    To ensure validity and comprehensive psychometric assessment, this test's structure is designed and compared with two standard psychological models:
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed ml-4">
+                    <strong>A. NEO-PI-R Model (Five-Factor Model):</strong> This model is used to cover the main dimensions of healthy personality. For example, Jamshid correlates with conscientiousness (order, precision, and perfectionism), Simorgh with openness to experience (deep thinking and self-awareness), and Rostam with extraversion (pragmatism, competitiveness, and strong will).
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed ml-4">
+                    <strong>B. MMPI (Minnesota Multiphasic Personality Inventory):</strong> For more detailed analysis of challenging dimensions and personality "shadow," MMPI scales are used to define archetype challenges.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h5 className="font-semibold">3. Mechanism and Scoring Method (5-Point Likert Scale)</h5>
+                  <p className="text-muted-foreground leading-relaxed">
+                    This test consists of 60 declarative statements targeting each of the 10 archetypes (intelligence and shadow). Users indicate their level of agreement or disagreement on a 5-point Likert scale (from "Strongly Disagree" to "Strongly Agree"). Finally, scores for all 10 archetypes are calculated and a complete personality profile is presented.
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+
           {apiError && (
             <div className="p-3 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg">
               <p className="text-sm text-red-600 dark:text-red-400 text-center">
@@ -310,19 +414,19 @@ export function Welcome({ onStart, language }: WelcomeProps) {
             >
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full h-16 sm:h-20 text-lg sm:text-xl font-bold"
                 size="lg"
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <Loader2 className="mr-2 h-6 w-6 sm:h-8 sm:w-8 animate-spin" />
                     <span>{language === 'fa' ? 'در حال ارسال...' : 'Submitting...'}</span>
                   </>
                 ) : (
                   <>
                     <span>{language === 'fa' ? 'شروع تست' : 'Start Test'}</span>
-                    {isRTL ? <ArrowLeft className="ml-2 h-5 w-5" /> : <ArrowRight className="ml-2 h-5 w-5" />}
+                    {isRTL ? <ArrowLeft className="ml-2 h-6 w-6 sm:h-8 sm:w-8" /> : <ArrowRight className="ml-2 h-6 w-6 sm:h-8 sm:w-8" />}
                   </>
                 )}
               </Button>

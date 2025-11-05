@@ -88,7 +88,7 @@ function App() {
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b">
           <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center">
             <div className="flex items-center gap-2 sm:gap-3">
-              <a href="https://ravanai.tedxneshatstreet.ir/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 sm:gap-3">
+              <a href="https://tedxneshatstreet.ir/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 sm:gap-3">
                 <img
                   src="/logo-black.png"
                   alt="TEDx Logo"

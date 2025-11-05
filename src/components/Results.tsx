@@ -406,17 +406,17 @@ export function Results({ scores, onRestart, language, responses, userId, userDa
             <CardContent className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">
-                  {language === 'fa' ? 'کهن‌الگوی اصلی' : 'Primary Archetype'}
+                  {language === 'fa' ? 'هوش برجسته (نقطه قوت)' : 'Dominant Intelligence (Strength)'}
                 </h4>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   {language === 'fa'
-                    ? `به عنوان یک ${primaryArchetype?.nameFa}، شما ${primaryArchetype?.keyTraitsFa.join(' و ')} را در خود دارید.`
+                    ? primaryArchetype?.detailedStrengthFa
                     : `As a ${primaryArchetype?.name}, you possess ${primaryArchetype?.keyTraits.join(' and ')}.`}
                 </p>
               </div>
-              
+
               {secondaryArchetype && percentages[secondaryArchetype.id] > 50 && (
-                <div>
+                <div className="mt-6 pt-4 border-t">
                   <h4 className="font-semibold mb-2">
                     {language === 'fa' ? 'کهن‌الگوی ثانویه' : 'Secondary Archetype'}
                   </h4>
@@ -442,17 +442,17 @@ export function Results({ scores, onRestart, language, responses, userId, userDa
             <CardContent className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">
-                  {language === 'fa' ? 'سایه شخصیتی' : 'Shadow Trait'}
+                  {language === 'fa' ? 'سایه شخصیتی (چالش)' : 'Shadow Trait (Challenge)'}
                 </h4>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   {language === 'fa'
-                    ? `${primaryArchetype?.shadowFa} می‌تواند چالشی برای شما باشد. آگاهی از آن اولین قدم برای رشد است.`
+                    ? primaryArchetype?.detailedShadowFa
                     : `${primaryArchetype?.shadow} can be a challenge for you. Awareness is the first step to growth.`}
                 </p>
               </div>
-              
+
               {weakestArchetype && percentages[weakestArchetype.id] < 30 && (
-                <div>
+                <div className="mt-6 pt-4 border-t">
                   <h4 className="font-semibold mb-2">
                     {language === 'fa' ? 'نقطه ضعف' : 'Weak Area'}
                   </h4>
