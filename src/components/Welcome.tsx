@@ -247,8 +247,6 @@ export function Welcome({ onStart, language }: WelcomeProps) {
                 <SelectContent>
                   <SelectItem value="male">{language === 'fa' ? 'مرد' : 'Male'}</SelectItem>
                   <SelectItem value="female">{language === 'fa' ? 'زن' : 'Female'}</SelectItem>
-                  <SelectItem value="other">{language === 'fa' ? 'سایر' : 'Other'}</SelectItem>
-                  <SelectItem value="prefer-not-to-say">{language === 'fa' ? 'ترجیح می‌دهم نگویم' : 'Prefer not to say'}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.gender && (
