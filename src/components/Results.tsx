@@ -5,7 +5,15 @@ import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Share2, RotateCcw, Trophy, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Share2, RotateCcw, Trophy, TrendingUp, AlertTriangle, MessageCircle, Send, Twitter, Facebook, Linkedin, Copy, Check } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { toPersianNumbers } from '../utils/persianNumbers';
 import { motion } from 'framer-motion';
 import { saveQuizSubmission } from '../utils/api';
@@ -28,6 +36,7 @@ export function Results({ scores, onRestart, language, responses, userId, userDa
   const [topArchetypes, setTopArchetypes] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     // Calculate percentages
@@ -107,21 +116,76 @@ export function Results({ scores, onRestart, language, responses, userId, userDa
     }
   };
 
-  const handleShare = () => {
+  const getShareText = () => {
     const primaryArchetype = archetypes.find(a => a.id === topArchetypes[0]);
-    const shareText = language === 'fa'
-      ? `کهن‌الگوی غالب من ${primaryArchetype?.nameFa} (${primaryArchetype?.titleFa}) است! شما هم تست کهن‌الگوی شخصیتی TEDx را امتحان کنید.`
-      : `My dominant archetype is ${primaryArchetype?.name} (${primaryArchetype?.title})! Try the TEDx Personality Archetype test yourself.`;
-    
+    const shareUrl = window.location.origin;
+
+    return {
+      text: language === 'fa'
+        ? `کهن‌الگوی غالب من ${primaryArchetype?.nameFa} (${primaryArchetype?.titleFa}) است! شما هم تست کهن‌الگوی شخصیتی TEDx را امتحان کنید.`
+        : `My dominant archetype is ${primaryArchetype?.name} (${primaryArchetype?.title})! Try the TEDx Personality Archetype test yourself.`,
+      url: shareUrl
+    };
+  };
+
+  const handleCopyToClipboard = async () => {
+    const { text, url } = getShareText();
+    const fullText = `${text}\n${url}`;
+
+    try {
+      await navigator.clipboard.writeText(fullText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy:', error);
+    }
+  };
+
+  const handleWhatsAppShare = () => {
+    const { text, url } = getShareText();
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${text}\n${url}`)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const handleTelegramShare = () => {
+    const { text, url } = getShareText();
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+    window.open(telegramUrl, '_blank');
+  };
+
+  const handleTwitterShare = () => {
+    const { text, url } = getShareText();
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, '_blank');
+  };
+
+  const handleFacebookShare = () => {
+    const { url } = getShareText();
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    window.open(facebookUrl, '_blank');
+  };
+
+  const handleLinkedinShare = () => {
+    const { url } = getShareText();
+    const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+    window.open(linkedinUrl, '_blank');
+  };
+
+  const handleNativeShare = async () => {
+    const { text, url } = getShareText();
+
     if (navigator.share) {
-      navigator.share({
-        title: language === 'fa' ? 'نتیجه تست کهن‌الگوی شخصیتی' : 'Personality Archetype Test Results',
-        text: shareText,
-      });
+      try {
+        await navigator.share({
+          title: language === 'fa' ? 'نتیجه تست کهن‌الگوی شخصیتی' : 'Personality Archetype Test Results',
+          text: text,
+          url: url,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
     } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(shareText);
-      alert(language === 'fa' ? 'نتیجه کپی شد!' : 'Result copied to clipboard!');
+      handleCopyToClipboard();
     }
   };
 
@@ -469,7 +533,7 @@ export function Results({ scores, onRestart, language, responses, userId, userDa
       </Tabs>
 
       {/* Action Buttons */}
-      <motion.div 
+      <motion.div
         className="flex flex-col sm:flex-row gap-4 justify-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -479,10 +543,73 @@ export function Results({ scores, onRestart, language, responses, userId, userDa
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Button onClick={handleShare} variant="default" className="flex items-center gap-2">
-            <Share2 className="h-4 w-4" />
-            {language === 'fa' ? 'اشتراک‌گذاری نتیجه' : 'Share Result'}
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="default" className="flex items-center gap-2">
+                <Share2 className="h-4 w-4" />
+                {language === 'fa' ? 'اشتراک‌گذاری نتیجه' : 'Share Result'}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align={language === 'fa' ? 'end' : 'start'} className="w-56">
+              <DropdownMenuLabel>
+                {language === 'fa' ? 'اشتراک‌گذاری در:' : 'Share on:'}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem onClick={handleWhatsAppShare} className="cursor-pointer">
+                <MessageCircle className="h-4 w-4 text-green-600" />
+                <span>{language === 'fa' ? 'واتساپ' : 'WhatsApp'}</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onClick={handleTelegramShare} className="cursor-pointer">
+                <Send className="h-4 w-4 text-blue-500" />
+                <span>{language === 'fa' ? 'تلگرام' : 'Telegram'}</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onClick={handleTwitterShare} className="cursor-pointer">
+                <Twitter className="h-4 w-4 text-sky-500" />
+                <span>{language === 'fa' ? 'توییتر / ایکس' : 'Twitter / X'}</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onClick={handleFacebookShare} className="cursor-pointer">
+                <Facebook className="h-4 w-4 text-blue-600" />
+                <span>{language === 'fa' ? 'فیسبوک' : 'Facebook'}</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem onClick={handleLinkedinShare} className="cursor-pointer">
+                <Linkedin className="h-4 w-4 text-blue-700" />
+                <span>{language === 'fa' ? 'لینکدین' : 'LinkedIn'}</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem onClick={handleCopyToClipboard} className="cursor-pointer">
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4 text-green-600" />
+                    <span className="text-green-600">
+                      {language === 'fa' ? 'کپی شد!' : 'Copied!'}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    <span>{language === 'fa' ? 'کپی متن' : 'Copy Text'}</span>
+                  </>
+                )}
+              </DropdownMenuItem>
+
+              {typeof navigator !== 'undefined' && 'share' in navigator && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleNativeShare} className="cursor-pointer">
+                    <Share2 className="h-4 w-4" />
+                    <span>{language === 'fa' ? 'گزینه‌های بیشتر...' : 'More Options...'}</span>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </motion.div>
         <motion.div
           whileHover={{ scale: 1.05 }}
